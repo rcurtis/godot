@@ -259,7 +259,7 @@ void EditorSettings::create() {
 
 	ObjectTypeDB::register_type<EditorSettings>(); //otherwise it can't be unserialized
 	String config_file_path;
-
+	String tmp_path;
 	if (config_path != "") {
 
 		dir = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
@@ -293,8 +293,8 @@ void EditorSettings::create() {
 
 		if (dir->change_dir("tmp") != OK) {
 			dir->make_dir("tmp");
-		} else {
-
+		}
+		else {
 			dir->change_dir("..");
 		}
 
@@ -316,6 +316,16 @@ void EditorSettings::create() {
 			dir->make_dir(pcp);
 		} else {
 			dir->change_dir("..");
+		}	
+
+		dir->change_dir("..");
+
+		// We created this dir up above before we had all the pcp info
+		dir->change_dir("tmp");
+		if (dir->change_dir(pcp.get_file()) != OK) {
+			dir->make_dir(pcp.get_file());			
+		} else {
+			dir->change_dir("..");
 		}
 
 		dir->change_dir("..");
@@ -323,6 +333,7 @@ void EditorSettings::create() {
 		// path at least is validated, so validate config file
 
 		config_file_path = config_path + "/" + config_dir + "/editor_settings.tres";
+		tmp_path = config_path + "/" + config_dir + "/tmp/" + pcp;
 
 		String open_path = config_file_path;
 
@@ -351,6 +362,7 @@ void EditorSettings::create() {
 		singleton->config_file_path = config_file_path;
 		singleton->project_config_path = pcp;
 		singleton->settings_path = config_path + "/" + config_dir;
+		singleton->tmp_path = tmp_path;
 
 		if (OS::get_singleton()->is_stdout_verbose()) {
 
@@ -381,6 +393,7 @@ fail:
 	singleton->save_changed_setting = true;
 	singleton->config_file_path = config_file_path;
 	singleton->settings_path = config_path + "/" + config_dir;
+	singleton->tmp_path = tmp_path;
 	singleton->_load_defaults(extra_config);
 	singleton->setup_language();
 	singleton->setup_network();
@@ -390,6 +403,11 @@ fail:
 String EditorSettings::get_settings_path() const {
 
 	return settings_path;
+}
+
+String EditorSettings::get_tmp_path() const {
+
+	return tmp_path;
 }
 
 void EditorSettings::setup_language() {

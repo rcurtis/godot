@@ -736,13 +736,13 @@ Error EditorExportPlatform::export_project_files(EditorExportSaveFunction p_func
 
 		FileAccess *f = NULL;
 
-		if (!FileAccess::exists(EditorSettings::get_singleton()->get_settings_path() + "/tmp/atlas-" + md5)) {
+		if (!FileAccess::exists(EditorSettings::get_singleton()->get_tmp_path() + "/atlas-" + md5)) {
 			print_line("NO MD5 INVALID");
 			atlas_valid = false;
 		}
 
 		if (atlas_valid)
-			f = FileAccess::open(EditorSettings::get_singleton()->get_settings_path() + "/tmp/atlas-" + md5, FileAccess::READ);
+			f = FileAccess::open(EditorSettings::get_singleton()->get_tmp_path() + "/tmp/atlas-" + md5, FileAccess::READ);
 
 		if (atlas_valid) {
 			//compare options
@@ -816,7 +816,7 @@ Error EditorExportPlatform::export_project_files(EditorExportSaveFunction p_func
 			rects.clear();
 			//oh well, atlas is not valid. need to make new one....
 
-			String dst_file = EditorSettings::get_singleton()->get_settings_path() + "/tmp/atlas-" + md5 + ".tex";
+			String dst_file = EditorSettings::get_singleton()->get_tmp_path() + "/atlas-" + md5 + ".tex";
 			Ref<ResourceImportMetadata> imd = memnew(ResourceImportMetadata);
 			//imd->set_editor();
 
@@ -867,7 +867,7 @@ Error EditorExportPlatform::export_project_files(EditorExportSaveFunction p_func
 		//atlas is valid (or it was just saved i guess), create the atex files and save them
 
 		if (resave_deps) {
-			f = FileAccess::open(EditorSettings::get_singleton()->get_settings_path() + "/tmp/atlas-" + md5, FileAccess::WRITE);
+			f = FileAccess::open(EditorSettings::get_singleton()->get_tmp_path() + "/atlas-" + md5, FileAccess::WRITE);
 			Dictionary options;
 			options["lossy_quality"] = group_lossy_quality;
 			options["shrink"] = EditorImportExport::get_singleton()->image_export_group_get_shrink(E->get());
@@ -893,7 +893,7 @@ Error EditorExportPlatform::export_project_files(EditorExportSaveFunction p_func
 				atex->set_region(region);
 				atex->set_margin(margin);
 
-				String path = EditorSettings::get_singleton()->get_settings_path() + "/tmp/tmpatlas.atex";
+				String path = EditorSettings::get_singleton()->get_tmp_path() + "/tmpatlas.atex";
 				Error err = ResourceSaver::save(path, atex);
 				if (err != OK) {
 					EditorNode::add_io_error(TTR("Could not save atlas subtexture:") + " " + path);
@@ -919,7 +919,7 @@ Error EditorExportPlatform::export_project_files(EditorExportSaveFunction p_func
 				remap_files[F->get()] = dst_path;
 			}
 
-			Vector<uint8_t> atlas_data = FileAccess::get_file_as_array(EditorSettings::get_singleton()->get_settings_path() + "/tmp/atlas-" + md5 + ".tex");
+			Vector<uint8_t> atlas_data = FileAccess::get_file_as_array(EditorSettings::get_singleton()->get_tmp_path() + "/atlas-" + md5 + ".tex");
 			Error err = p_func(p_udata, atlas_path, atlas_data, counter, files.size());
 			saved.insert(atlas_path);
 			if (err)
@@ -1011,7 +1011,7 @@ Error EditorExportPlatform::export_project_files(EditorExportSaveFunction p_func
 		}
 
 		String remap_file = "engine.cfb";
-		String engine_cfb = EditorSettings::get_singleton()->get_settings_path() + "/tmp/tmp" + remap_file;
+		String engine_cfb = EditorSettings::get_singleton()->get_tmp_path() + "/tmp" + remap_file;
 		Globals::get_singleton()->save_custom(engine_cfb, custom);
 		Vector<uint8_t> data = FileAccess::get_file_as_array(engine_cfb);
 
@@ -1176,7 +1176,7 @@ Error EditorExportPlatform::save_pack(FileAccess *dst, bool p_make_bundles, int 
 
 	EditorProgress ep("savepack", TTR("Packing"), 102);
 
-	String tmppath = EditorSettings::get_singleton()->get_settings_path() + "/tmp/packtmp";
+	String tmppath = EditorSettings::get_singleton()->get_tmp_path() + "/packtmp";
 	FileAccess *tmp = FileAccess::open(tmppath, FileAccess::WRITE);
 	uint64_t ofs_begin = dst->get_pos();
 

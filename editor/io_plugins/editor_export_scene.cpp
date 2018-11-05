@@ -63,7 +63,7 @@ Vector<uint8_t> EditorSceneExportPlugin::custom_export(String &p_path, const Ref
 	String smd5;
 	String gp = Globals::get_singleton()->globalize_path(p_path);
 	String md5 = gp.md5_text();
-	String tmp_path = EditorSettings::get_singleton()->get_settings_path().plus_file("tmp/");
+	String tmp_path = EditorSettings::get_singleton()->get_tmp_path() + "/";
 
 	bool valid = false;
 	{

@@ -92,6 +92,7 @@ private:
 
 	String config_file_path;
 	String settings_path;
+	String tmp_path;
 
 	Ref<Resource> clipboard;
 
